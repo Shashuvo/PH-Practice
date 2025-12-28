@@ -1,4 +1,7 @@
-import { sendPasswordResetEmail, signInWithEmailAndPassword } from "firebase/auth";
+import {
+  sendPasswordResetEmail,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
 import React, { useRef, useState } from "react";
 import { Link } from "react-router";
 import { auth } from "../../firebase/firebase_init";
@@ -33,12 +36,12 @@ const Login2 = () => {
     const email = emailRef.current.value;
     // send Password reset
     sendPasswordResetEmail(auth, email)
-    .then(()=>{
-        alert("Password Reset mail send to your Email.")
-    })
-    .catch(error=>{
+      .then(() => {
+        alert("Password Reset mail send to your Email.");
+      })
+      .catch((error) => {
         setErrorMessage(error.message);
-    })
+      });
   };
   return (
     // Email Sign in

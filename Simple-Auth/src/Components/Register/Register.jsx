@@ -1,4 +1,8 @@
-import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  sendEmailVerification,
+  updateProfile,
+} from "firebase/auth";
 import React, { useState } from "react";
 import { auth } from "../../firebase/firebase_init";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
@@ -13,6 +17,8 @@ const Register = () => {
     e.preventDefault();
     const email = e.target.email.value;
     const password = e.target.password.value;
+    const name = e.target.name.value;
+    const photo = e.target.photo.value;
     const terms = e.target.terms.checked;
     setErrorMessage(" ");
     setSuccess(false);
@@ -50,13 +56,24 @@ const Register = () => {
         console.log(result);
         // email verification
         sendEmailVerification(auth.currentUser)
-        .then(()=>{
-          alert("A verification mail send to your Email.")
-          setSuccess(true);
-        })
-        .catch(error=>{
-          console.log(error);
-        })
+          .then(() => {
+            alert("A verification mail send to your Email.");
+            setSuccess(true);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+
+        // Update Profile
+        const profile = {
+          displayName: name,
+          photoURL: photo,
+        };
+        updateProfile(auth.currentUser, profile)
+          .then(() => {
+            console.log("Profile Updated.");
+          })
+          .catch((error) => setErrorMessage(error.message));
       })
       .catch((error) => {
         setErrorMessage(error.message);
@@ -67,6 +84,20 @@ const Register = () => {
     <div className="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
       <div className="card-body">
         <form onSubmit={handleSignUp}>
+          <label className="label">Full Name</label>
+          <input
+            type="text"
+            name="name"
+            className="input"
+            placeholder="Your Full Name"
+          />
+          <label className="label">Photo URL</label>
+          <input
+            type="text"
+            name="photo"
+            className="input"
+            placeholder="Photo URL"
+          />
           <label className="label">Email</label>
           <input
             type="email"
@@ -100,7 +131,12 @@ const Register = () => {
           </label>
           <br></br>
           <button className="btn btn-neutral mt-4">SignUp</button>
-          <p className="mt-2">Already have an account? Please <Link to="/login2" className="text-blue-600 underline">Login</Link></p>
+          <p className="mt-2">
+            Already have an account? Please{" "}
+            <Link to="/login2" className="text-blue-600 underline">
+              Login
+            </Link>
+          </p>
         </form>
         {errorMessage && <p className="text-red-500">{errorMessage}</p>}
         {success && (
