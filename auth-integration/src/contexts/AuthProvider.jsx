@@ -5,16 +5,20 @@ import { auth } from '../Components/firebase/firebase_init';
 
 const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     const createUser = (email, password) => {
-        return createUserWithEmailAndPassword(auth, email, password)
+        setLoading(true);
+        return createUserWithEmailAndPassword(auth, email, password);
     }
 
     const signInUser = (email, password) => {
+        setLoading(true);
         return signInWithEmailAndPassword(auth, email, password);
     }
 
     const signOutUser = () => {
+        setLoading(true);
         return signOut(auth);
     }
 
@@ -22,6 +26,7 @@ const AuthProvider = ({ children }) => {
         const unSubscribe = onAuthStateChanged(auth, currentUser => {
             console.log("user is found in useEffect on auth State changed.", currentUser);
             setUser(currentUser);
+            setLoading(false);
         })
         return () => {
             unSubscribe();
@@ -29,6 +34,7 @@ const AuthProvider = ({ children }) => {
     }, [])
 
     const userInfo = {
+        loading,
         user,
         createUser,
         signInUser,
